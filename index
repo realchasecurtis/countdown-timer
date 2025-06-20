@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Flip Countdown Timer</title>
+  <title>Digital Countdown</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
+      background: #111;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -15,86 +16,109 @@
 
     .countdown {
       display: flex;
+      gap: 40px;
+    }
+
+    .group {
+      display: flex;
       gap: 10px;
     }
 
-    .unit {
+    .digit {
       background: white;
       color: black;
+      width: 60px;
+      height: 90px;
+      border-radius: 8px;
       font-size: 48px;
       font-weight: bold;
-      padding: 20px 15px;
-      border-radius: 10px;
-      width: 80px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 
     .label {
+      text-align: center;
       font-size: 14px;
-      margin-top: 8px;
-      color: #333;
+      color: #aaa;
+      margin-top: 6px;
     }
 
-    .unit-wrapper {
-      text-align: center;
+    .block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   </style>
 </head>
 <body>
 
 <div class="countdown">
-  <div class="unit-wrapper">
-    <div class="unit" id="hours">--</div>
+  <div class="block">
+    <div class="group" id="hours-group"></div>
     <div class="label">Hours</div>
   </div>
-  <div class="unit-wrapper">
-    <div class="unit" id="minutes">--</div>
+  <div class="block">
+    <div class="group" id="minutes-group"></div>
     <div class="label">Minutes</div>
   </div>
-  <div class="unit-wrapper">
-    <div class="unit" id="seconds">--</div>
+  <div class="block">
+    <div class="group" id="seconds-group"></div>
     <div class="label">Seconds</div>
   </div>
 </div>
 
 <script>
-  function getCSTTargetDate() {
-    // Get current time in UTC
+  const groups = {
+    hours: document.getElementById("hours-group"),
+    minutes: document.getElementById("minutes-group"),
+    seconds: document.getElementById("seconds-group")
+  };
+
+  function getCSTTime() {
     const now = new Date();
+    return new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
+  }
 
-    // Create a date object for 12:00 PM CST/CDT today
-    const target = new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
-    target.setHours(12, 0, 0, 0); // 12:00 PM in CST/CDT
-
-    // If it's past 12 PM CST/CDT, target tomorrow
-    if (now >= new Date(target.getTime() + (now.getTimezoneOffset() * 60000))) {
+  function getTargetTime() {
+    const cstNow = getCSTTime();
+    const target = new Date(cstNow);
+    target.setHours(12, 0, 0, 0);
+    if (cstNow >= target) {
       target.setDate(target.getDate() + 1);
     }
-
     return target;
   }
 
   function updateCountdown() {
-    const now = new Date();
-    const target = getCSTTargetDate();
+    const now = getCSTTime();
+    const target = getTargetTime();
+    const diff = target - now;
 
-    const targetUTC = new Date(target.toLocaleString("en-US", { timeZone: "UTC" }));
-    const nowUTC = new Date(now.toISOString());
+    const h = String(Math.floor(diff / 1000 / 60 / 60)).padStart(2, '0');
+    const m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
+    const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
 
-    const diff = targetUTC - nowUTC;
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    renderDigits('hours', h);
+    renderDigits('minutes', m);
+    renderDigits('seconds', s);
   }
 
-  setInterval(updateCountdown, 1000);
+  function renderDigits(unit, value) {
+    const group = groups[unit];
+    group.innerHTML = '';
+    for (let i = 0; i < value.length; i++) {
+      const digit = document.createElement("div");
+      digit.className = "digit";
+      digit.textContent = value[i];
+      group.appendChild(digit);
+    }
+  }
+
   updateCountdown();
+  setInterval(updateCountdown, 1000);
 </script>
 
 </body>
+</html>
