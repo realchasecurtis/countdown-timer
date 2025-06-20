@@ -5,53 +5,60 @@
   <title>Digital Countdown</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      color: #fff;
-      font-family: 'Courier New', Courier, monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-    .countdown {
-      display: flex;
-      gap: 40px;
-    }
+.countdown {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5vw;
+  max-width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
 
-    .group {
-      display: flex;
-      gap: 10px;
-    }
+.group {
+  display: flex;
+  gap: 1vw;
+}
 
-    .digit {
-      background: white;
-      color: black;
-      width: 60px;
-      height: 90px;
-      border-radius: 8px;
-      font-size: 48px;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
+.digit {
+  background: white;
+  color: black;
+  width: 12vw;
+  height: 18vw;
+  max-width: 60px;
+  max-height: 90px;
+  border-radius: 8px;
+  font-size: 6vw;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
 
-    .label {
-      text-align: center;
-      font-size: 14px;
-      color: #aaa;
-      margin-top: 6px;
-    }
+.label {
+  text-align: center;
+  font-size: 3vw;
+  color: #aaa;
+  margin-top: 6px;
+}
 
-    .block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+.block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
   </style>
 </head>
 <body>
