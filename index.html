@@ -2,132 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Digital Countdown</title>
+  <title>Responsive Countdown Timer</title>
   <style>
     html, body {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  color: #fff;
-  font-family: 'Courier New', Courier, monospace;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.countdown {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 5vw;
-  max-width: 100%;
-  padding: 1rem;
-  box-sizing: border-box;
-}
+    .countdown {
+      display: flex;
+      gap: 1rem;
+      padding: 0.5rem;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-.group {
-  display: flex;
-  gap: 1vw;
-}
+    .block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-.digit {
-  background: white;
-  color: black;
-  width: 12vw;
-  height: 18vw;
-  max-width: 60px;
-  max-height: 90px;
-  border-radius: 8px;
-  font-size: 6vw;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
+    .group {
+      display: flex;
+      gap: 0.5rem;
+    }
 
-.label {
-  text-align: center;
-  font-size: 3vw;
-  color: #aaa;
-  margin-top: 6px;
-}
+    .digit {
+      background: white;
+      color: black;
+      width: 3.5em;
+      height: 5em;
+      border-radius: 8px;
+      font-size: 2em;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
 
-.block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+    .label {
+      text-align: center;
+      font-size: 1em;
+      color: #aaa;
+      margin-top: 0.25em;
+    }
   </style>
 </head>
 <body>
 
-<div class="countdown">
-  <div class="block">
-    <div class="group" id="hours-group"></div>
-    <div class="label">Hours</div>
+  <div class="countdown">
+    <div class="block">
+      <div class="group" id="hours-group"></div>
+      <div class="label">Hours</div>
+    </div>
+    <div class="block">
+      <div class="group" id="minutes-group"></div>
+      <div class="label">Minutes</div>
+    </div>
+    <div class="block">
+      <div class="group" id="seconds-group"></div>
+      <div class="label">Seconds</div>
+    </div>
   </div>
-  <div class="block">
-    <div class="group" id="minutes-group"></div>
-    <div class="label">Minutes</div>
-  </div>
-  <div class="block">
-    <div class="group" id="seconds-group"></div>
-    <div class="label">Seconds</div>
-  </div>
-</div>
 
-<script>
-  const groups = {
-    hours: document.getElementById("hours-group"),
-    minutes: document.getElementById("minutes-group"),
-    seconds: document.getElementById("seconds-group")
-  };
+  <script>
+    const groups = {
+      hours: document.getElementById("hours-group"),
+      minutes: document.getElementById("minutes-group"),
+      seconds: document.getElementById("seconds-group")
+    };
 
-  function getCSTTime() {
-    const now = new Date();
-    return new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
-  }
-
-  function getTargetTime() {
-    const cstNow = getCSTTime();
-    const target = new Date(cstNow);
-    target.setHours(12, 0, 0, 0);
-    if (cstNow >= target) {
-      target.setDate(target.getDate() + 1);
+    function getCSTTime() {
+      const now = new Date();
+      return new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
     }
-    return target;
-  }
 
-  function updateCountdown() {
-    const now = getCSTTime();
-    const target = getTargetTime();
-    const diff = target - now;
-
-    const h = String(Math.floor(diff / 1000 / 60 / 60)).padStart(2, '0');
-    const m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
-    const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-
-    renderDigits('hours', h);
-    renderDigits('minutes', m);
-    renderDigits('seconds', s);
-  }
-
-  function renderDigits(unit, value) {
-    const group = groups[unit];
-    group.innerHTML = '';
-    for (let i = 0; i < value.length; i++) {
-      const digit = document.createElement("div");
-      digit.className = "digit";
-      digit.textContent = value[i];
-      group.appendChild(digit);
+    function getTargetTime() {
+      const now = getCSTTime();
+      const target = new Date(now);
+      target.setHours(12, 0, 0, 0);
+      if (now >= target) target.setDate(target.getDate() + 1);
+      return target;
     }
-  }
 
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-</script>
+    function updateCountdown() {
+      const now = getCSTTime();
+      const target = getTargetTime();
+      const diff = target - now;
+
+      const h = String(Math.floor(diff / 1000 / 60 / 60)).padStart(2, '0');
+      const m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
+      const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+
+      renderDigits('hours', h);
+      renderDigits('minutes', m);
+      renderDigits('seconds', s);
+    }
+
+    function renderDigits(unit, value) {
+      const group = groups[unit];
+      group.innerHTML = '';
+      for (const char of value) {
+        const div = document.createElement("div");
+        div.className = "digit";
+        div.textContent = char;
+        group.appendChild(div);
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
 
 </body>
 </html>
