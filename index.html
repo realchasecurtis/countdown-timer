@@ -7,11 +7,11 @@
 body {
   display: grid;
   margin: 0;
-  background: #111; /* Optional: dark background for contrast */
+  /* Removed background to remain transparent */
 }
 svg {
   margin: auto;
-  padding: 0.5rem; /* Added vertical padding */
+  padding: 0.5rem; /* Added vertical padding for breathing room */
   width: clamp(12rem, 80vw, 28rem);
 }
 svg.shadow {
@@ -21,7 +21,7 @@ svg.shadow {
 rect {
   fill: #fff;
   rx: 1.5; /* Gentle rounding */
-  ry: 1.5; /* Ensures vertical rounding matches */
+  ry: 1.5;
 }
 text {
   dominant-baseline: central;
