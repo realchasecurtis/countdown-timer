@@ -1,99 +1,109 @@
 <!DOCTYPE html>
-<html lang=en>
-
-<meta charset=utf-8>
+<html lang="en">
+<meta charset="utf-8">
 <title>Responsive Countdown</title>
 <style>
 body {
   display: grid;
-  margin: 0
+  margin: 0;
+  background: #111;
+}
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
 }
 svg {
   margin: auto;
   padding: 0 .5rem;
-  width: clamp(12rem, 80vw, 28rem)
+  width: clamp(12rem, 80vw, 28rem);
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out forwards;
+}
+svg:nth-of-type(2) {
+  animation-delay: 0.5s;
 }
 svg.shadow {
   filter: drop-shadow(0 2px 2px #0005);
-  padding-top: .5rem
+  padding-top: .5rem;
 }
 rect {
   fill: #fff;
-  rx: 1.1
+  rx: 1.1;
 }
 text {
   dominant-baseline: central;
   font: bold 6.4px 'Courier New', monospace;
-  text-anchor: middle
+  text-anchor: middle;
 }
 text:not([id]) {
   dominant-baseline: hanging;
   fill: #aaa;
   font-size: clamp(3.1px, 6px - .5vw, 4px);
-  font-weight: normal
+  font-weight: normal;
 }
 </style>
 
-<svg class=shadow viewBox="0 0 59 12">
-  <rect width=8 height=12 />
-  <rect width=8 height=12 x=9 />
-  <rect width=8 height=12 x=21 />
-  <rect width=8 height=12 x=30 />
-  <rect width=8 height=12 x=42 />
-  <rect width=8 height=12 x=51 />
-  <text id=h1 x=4 y=6.4>0</text>
-  <text id=h2 x=13 y=6.4>0</text>
-  <text id=m1 x=25 y=6.4>0</text>
-  <text id=m2 x=34 y=6.4>0</text>
-  <text id=s1 x=46 y=6.4>0</text>
-  <text id=s2 x=55 y=6.4>0</text>
+<svg class="shadow" viewBox="0 0 59 12">
+  <rect width="8" height="12" />
+  <rect width="8" height="12" x="9" />
+  <rect width="8" height="12" x="21" />
+  <rect width="8" height="12" x="30" />
+  <rect width="8" height="12" x="42" />
+  <rect width="8" height="12" x="51" />
+  <text id="h1" x="4" y="6.4">0</text>
+  <text id="h2" x="13" y="6.4">0</text>
+  <text id="m1" x="25" y="6.4">0</text>
+  <text id="m2" x="34" y="6.4">0</text>
+  <text id="s1" x="46" y="6.4">0</text>
+  <text id="s2" x="55" y="6.4">0</text>
 </svg>
+
 <svg viewBox="0 -1.5 73 7">
-  <text x=10.5>Hours</text>
-  <text x=36.5>Minutes</text>
-  <text x=62.5>Seconds</text>
+  <text x="10.5">Hours</text>
+  <text x="36.5">Minutes</text>
+  <text x="62.5">Seconds</text>
 </svg>
 
 <script>
-const fmt = Intl.DateTimeFormat(0, {
+const fmt = Intl.DateTimeFormat([], {
   timeZone: 'America/Chicago',
-  hour12: 0,
+  hour12: false,
   hour: 'numeric',
   minute: 'numeric',
   second: 'numeric'
-})
+});
 
 function update() {
-  let [h, m, s] = fmt.format().split(':')
-  h = 11 - h
-  m = 59 - m
-  s = 60 - s
-  if (h < 0) h += 24
+  let [h, m, s] = fmt.format().split(':').map(Number);
+  h = 11 - h;
+  m = 59 - m;
+  s = 60 - s;
+  if (h < 0) h += 24;
 
-  h1.firstChild.data = h / 10 | 0
-  h2.firstChild.data = h % 10
-  m1.firstChild.data = m / 10 | 0
-  m2.firstChild.data = m % 10
-  s1.firstChild.data = s / 10 | 0
-  s2.firstChild.data = s % 10
+  h1.textContent = Math.floor(h / 10);
+  h2.textContent = h % 10;
+  m1.textContent = Math.floor(m / 10);
+  m2.textContent = m % 10;
+  s1.textContent = Math.floor(s / 10);
+  s2.textContent = s % 10;
 }
 
-let timer
+let timer;
 function start() {
-  update()
-  timer = setInterval(update, 1000)
+  update();
+  timer = setInterval(update, 1000);
 }
 
 function handleVisibility() {
   if (document.visibilityState === 'visible') {
-    update()
-    setTimeout(start, 1000 - Date.now() % 1000)
+    update();
+    setTimeout(start, 1000 - Date.now() % 1000);
   } else {
-    clearInterval(timer)
+    clearInterval(timer);
   }
 }
-handleVisibility()
-addEventListener('visibilitychange', handleVisibility)
-</script>
 
+handleVisibility();
+document.addEventListener('visibilitychange', handleVisibility);
+</script>
 </html>
