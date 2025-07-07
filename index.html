@@ -1,133 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Responsive Countdown</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<html lang=en>
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Courier New', Courier, monospace;
-      color: #fff;
-      width: 100%;
-      height: 100%;
-    }
+<meta charset=utf-8>
+<title>Responsive Countdown</title>
+<style>
+body {
+  display: grid;
+  margin: 0
+}
+svg {
+  margin: auto;
+  padding: 0 .5rem;
+  width: clamp(12rem, 80vw, 28rem)
+}
+svg.shadow {
+  filter: drop-shadow(0 2px 2px #0005);
+  padding-top: .5rem
+}
+rect {
+  fill: #fff;
+  rx: 1.1
+}
+text {
+  dominant-baseline: central;
+  font: bold 6.4px 'Courier New', monospace;
+  text-anchor: middle
+}
+text:not([id]) {
+  dominant-baseline: hanging;
+  fill: #aaa;
+  font-size: clamp(3.1px, 6px - .5vw, 4px);
+  font-weight: normal
+}
+</style>
 
-    .countdown {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 2rem;
-      padding: 0.5rem;
-      width: 100%;
-    }
+<svg class=shadow viewBox="0 0 59 12">
+  <rect width=8 height=12 />
+  <rect width=8 height=12 x=9 />
+  <rect width=8 height=12 x=21 />
+  <rect width=8 height=12 x=30 />
+  <rect width=8 height=12 x=42 />
+  <rect width=8 height=12 x=51 />
+  <text id=h1 x=4 y=6.4>0</text>
+  <text id=h2 x=13 y=6.4>0</text>
+  <text id=m1 x=25 y=6.4>0</text>
+  <text id=m2 x=34 y=6.4>0</text>
+  <text id=s1 x=46 y=6.4>0</text>
+  <text id=s2 x=55 y=6.4>0</text>
+</svg>
+<svg viewBox="0 -1.5 73 7">
+  <text x=10.5>Hours</text>
+  <text x=36.5>Minutes</text>
+  <text x=62.5>Seconds</text>
+</svg>
 
-    .block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+<script>
+const fmt = Intl.DateTimeFormat(0, {
+  timeZone: 'America/Chicago',
+  hour12: 0,
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric'
+})
 
-    .group {
-      display: flex;
-      gap: 0.5rem;
-    }
+function update() {
+  let [h, m, s] = fmt.format().split(':')
+  h = 11 - h
+  m = 59 - m
+  s = 60 - s
+  if (h < 0) h += 24
 
-    .digit {
-      background: #fff;
-      color: #000;
-      width: clamp(30px, 10vw, 60px);
-      height: clamp(45px, 15vw, 90px);
-      border-radius: 8px;
-      font-size: clamp(1.5rem, 5vw, 3rem);
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
+  h1.firstChild.data = h / 10 | 0
+  h2.firstChild.data = h % 10
+  m1.firstChild.data = m / 10 | 0
+  m2.firstChild.data = m % 10
+  s1.firstChild.data = s / 10 | 0
+  s2.firstChild.data = s % 10
+}
 
-    .label {
-      font-size: clamp(0.8rem, 2.5vw, 1.2rem);
-      color: #aaa;
-      margin-top: 0.4rem;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
+let timer
+function start() {
+  update()
+  timer = setInterval(update, 1000)
+}
 
-  <div class="countdown">
-    <div class="block">
-      <div class="group" id="hours-group"></div>
-      <div class="label">Hours</div>
-    </div>
-    <div class="block">
-      <div class="group" id="minutes-group"></div>
-      <div class="label">Minutes</div>
-    </div>
-    <div class="block">
-      <div class="group" id="seconds-group"></div>
-      <div class="label">Seconds</div>
-    </div>
-  </div>
+function handleVisibility() {
+  if (document.visibilityState === 'visible') {
+    update()
+    setTimeout(start, 1000 - Date.now() % 1000)
+  } else {
+    clearInterval(timer)
+  }
+}
+handleVisibility()
+addEventListener('visibilitychange', handleVisibility)
+</script>
 
-  <script>
-    const groups = {
-      hours: document.getElementById("hours-group"),
-      minutes: document.getElementById("minutes-group"),
-      seconds: document.getElementById("seconds-group")
-    };
-
-    function getCSTTime() {
-      const now = new Date();
-      return new Date(now.toLocaleString("en-US", { timeZone: "America/Chicago" }));
-    }
-
-    function getTargetTime() {
-      const cstNow = getCSTTime();
-      const target = new Date(cstNow);
-      target.setHours(12, 0, 0, 0);
-      if (cstNow >= target) {
-        target.setDate(target.getDate() + 1);
-      }
-      return target;
-    }
-
-    function updateCountdown() {
-      const now = getCSTTime();
-      const target = getTargetTime();
-      const diff = target - now;
-
-      const h = String(Math.floor(diff / 1000 / 60 / 60)).padStart(2, '0');
-      const m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
-      const s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-
-      renderDigits('hours', h);
-      renderDigits('minutes', m);
-      renderDigits('seconds', s);
-    }
-
-    function renderDigits(unit, value) {
-      const group = groups[unit];
-      group.innerHTML = '';
-      for (let i = 0; i < value.length; i++) {
-        const digit = document.createElement("div");
-        digit.className = "digit";
-        digit.textContent = value[i];
-        group.appendChild(digit);
-      }
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  </script>
-
-</body>
 </html>
